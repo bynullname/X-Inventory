@@ -3,5 +3,9 @@ export default defineNuxtConfig({
   ssr:false,
   devtools: { enabled: true },
   css: ['element-plus/dist/index.css'],
-  dev:'0.0.0.0'
+  dev:'0.0.0.0',
+  modules: [
+    '@vant/nuxt'
+     ],
+  vant: { /** Options */ }
 })

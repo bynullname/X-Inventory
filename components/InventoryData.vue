@@ -1,10 +1,12 @@
 <template>
   <el-table
+    ref="tableRef"
+    :height="tableHeight"
     :data="tableData"
     style="width: 100%"
     :row-class-name="tableRowClassName"
   >
-    <el-table-column prop="location_number" label="库位号" width="180" />
+    <el-table-column prop="location_number" label="库位号" width="100" />
     <el-table-column prop="sn" label="SN号" />
     <el-table-column v-if="isDesktop" prop="material_number" label="物料号" />
     <el-table-column v-if="isDesktop" prop="quantity" label="数量" />
@@ -17,8 +19,37 @@
   </el-table>
 </template>
 
+
+<style>
+.el-table .error-row {
+  --el-table-tr-bg-color: #f53c3c;
+}
+.el-table .success-row {
+  --el-table-tr-bg-color: #d5f3c6;
+}
+
+</style>
+
+
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+
+const tableHeight = ref(null);
+const tableRef = ref(null);
+
+const updateTableHeight = () => {
+  const table = tableRef.value.$el; // 访问 DOM 元素而不是组件实例
+  if (!table) return;
+
+  const top = table.getBoundingClientRect().top;
+  if (top <= 70) {
+    const height = window.innerHeight - 70;
+    tableHeight.value = height + 'px';
+  } else {
+    tableHeight.value = null; // 当表格不在固定位置时，重置高度
+  }
+};
+
 
 interface Data {
   location_number: string;
@@ -50,10 +81,14 @@ const updateWindowWidth = () => {
 
 onMounted(() => {
   window.addEventListener('resize', updateWindowWidth);
+  window.addEventListener('scroll', updateTableHeight);
+
 });
 
 onUnmounted(() => {
   window.removeEventListener('resize', updateWindowWidth);
+  window.removeEventListener('scroll', updateTableHeight);
+
 });
 
 // 这里是模拟数据
@@ -492,12 +527,3 @@ const tableData: Data[] = [
   },
 ];
 </script>
-
-<style>
-.el-table .error-row {
-  --el-table-tr-bg-color: #f53c3c;
-}
-.el-table .success-row {
-  --el-table-tr-bg-color: #d5f3c6;
-}
-</style>

@@ -52,6 +52,7 @@
 
 <script setup>
 import {onMounted, reactive, ref } from 'vue';
+import { deviceConfig } from '~/config/index';
 
 const isMobile = ref(false);
 const isLoggedIn = ref(false);

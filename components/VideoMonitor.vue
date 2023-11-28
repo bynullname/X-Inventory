@@ -2,14 +2,36 @@
   <div class="video-monitor">
     <div class="image-container">
       <span class="camera-label">左侧相机</span>
-      <img src="/test.jpeg" alt="Camera 1" />
+      <img :src="leftImageUrl" @error="setDefaultImage" alt="Camera 1" />
     </div>
     <div class="image-container">
-      <span class="camera-label">右侧相机</span>
-      <img src="/test.jpeg" alt="Camera 2" />
+      <span class="camera-label">左侧相机</span>
+      <img :src="leftImageUrl" @error="setDefaultImage" alt="Camera 1" />
     </div>
   </div>
 </template>
+
+
+<script setup>
+import { onMounted, ref } from 'vue';
+import { deviceConfig } from '~/config/index';
+
+const leftImageUrl = ref('/initial-image-url.png');
+const defaultImageUrl = '/logo.png'; // 默认图片 URL
+
+const setDefaultImage = (event) => {
+  event.target.src = defaultImageUrl;
+};
+
+const updateImage = () => {
+  // 每隔0.2秒更新图像 URL
+  leftImageUrl.value = `${deviceConfig.apiUrl}/api/image_left?timestamp=${new Date().getTime()}`;
+};
+
+onMounted(() => {
+  setInterval(updateImage, 200);
+});
+</script>
 
 <style scoped>
 .video-monitor {
@@ -24,8 +46,8 @@
 .image-container {
   width: 640px;
   height: 496px;
-  border: 3px solid #007bff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* border: 3px solid #007bff; */
+  box-shadow: 0 6px 7px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
   align-items: center;

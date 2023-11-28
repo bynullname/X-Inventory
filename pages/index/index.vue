@@ -8,11 +8,11 @@
             <img src="/logo.png" alt="Logo">
           </div>
           <el-form>
-            <el-form-item label="用户名">
-              <el-input v-model="loginForm.username"></el-input>
+            <el-form-item label="用&ensp;户&ensp;名">
+              <el-input v-model="loginForm.username" class="login-input"></el-input>
             </el-form-item>
-            <el-form-item label="密码">
-              <el-input type="password" v-model="loginForm.password"></el-input>
+            <el-form-item label="密&emsp;&emsp;码">
+              <el-input type="password" v-model="loginForm.password" class="login-input"></el-input>
             </el-form-item>
             <div class="button-container">
               <el-button type="primary" @click="handleLogin">登录</el-button>
@@ -161,11 +161,29 @@ const fetchLatestInventoryPlans = async () => {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  background-image: url('/background.webp'); /* 添加背景图 */
+  background-size: cover; /* 确保背景图覆盖整个容器 */
+  background-position: center; /* 背景图居中 */
+  position: relative; /* 为蒙版设置相对定位 */
+}
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.7); /* 半透明黑色蒙版 */
+  z-index: 1; /* 确保蒙版位于内容之下 */
 }
 
 .login-box {
   width: 400px;
   border-radius: 10px;
+  position: relative; /* 使登录框高于蒙版 */
+  padding: 20px 20px;
+  z-index: 2;
 }
 
 .content {
@@ -180,6 +198,11 @@ const fetchLatestInventoryPlans = async () => {
 .logo img {
   width: 200px;
 }
+
+.login-input {
+  width: 100%; /* 设置为父元素宽度的100% */
+}
+
 
 .button-container, .el-form-item, .full-width-select {
   text-align: center;

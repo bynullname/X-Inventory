@@ -36,7 +36,7 @@ const isMobile = computed(() => {
 }
 
 .main-content {
-  padding-top: 80px; /* 适当调整以适应 Header 的高度 */
+  padding-top: 70px; /* 适当调整以适应 Header 的高度 */
 }
 
 /* 移动端的样式 */
@@ -59,7 +59,5 @@ const isMobile = computed(() => {
     height: 100%;
   }
 }
-
-/* PC端的样式不需要特别调整 */
 </style>
 

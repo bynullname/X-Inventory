@@ -1,65 +1,124 @@
 <template>
-  <div class="container">
-    <Header />
-    <div class="main-content">
-      <div v-if="isMobile">
-        <van-swipe class="my-swipe" indicator-color="white">
-          <van-swipe-item>
-            <VideoMonitor />
-          </van-swipe-item>
-          <van-swipe-item>
-            <InventoryData />
-          </van-swipe-item>
-        </van-swipe>
-      </div>
-      <div v-else>
-        <VideoMonitor />
-        <ControlArea />
-        <InventoryData />
-      </div>
-    </div>
+  <div class="login-container">
+    <el-card class="login-box">
+      <transition name="fade" mode="out-in">
+        <div v-if="!isLoggedIn" key="login-form">
+          <!-- 登录前显示的内容 -->
+          <div class="logo">
+            <img src="/logo.png" alt="Logo">
+          </div>
+          <el-form>
+            <el-form-item label="用户名">
+              <el-input v-model="loginForm.username"></el-input>
+            </el-form-item>
+            <el-form-item label="密码">
+              <el-input type="password" v-model="loginForm.password"></el-input>
+            </el-form-item>
+            <div class="button-container">
+              <el-button type="primary" @click="handleLogin">登录</el-button>
+            </div>
+          </el-form>
+        </div>
+
+        <div v-else key="after-login-form">
+          <!-- 登录后显示的内容 -->
+          <el-form>
+            <el-form-item label="盘点计划名称">
+              <el-input placeholder="输入盘点计划名称" class="full-width"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" class="full-width">创建计划</el-button>
+            </el-form-item>
+            <div class="divider">---------- or ----------</div>
+            <el-form-item label="历史盘点计划">
+              <el-select placeholder="请选择" class="full-width-select">
+                <el-option
+                  v-for="item in historyPlans"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="success" class="full-width">继续盘点</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+      </transition>
+    </el-card>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import {onMounted, reactive, ref } from 'vue';
 
-const isMobile = computed(() => {
-  return window.innerWidth <= 600;
+const isMobile = ref(false);
+const isLoggedIn = ref(false);
+const loginForm = reactive({
+  username: '',
+  password: ''
+});
+const historyPlans = ref([{ value: 'plan1', label: '计划 1' }, { value: 'plan2', label: '计划 2' }]); // 示例数据
+
+const handleLogin = () => {
+  console.log('登录信息', loginForm);
+  isLoggedIn.value = true; // 模拟登录成功
+};
+onMounted(() => {
+  if (window.navigator.userAgent.match(/mobile/i)) {
+    isMobile.value = true;
+    navigateTo('/inventory');
+  }
 });
 </script>
 
-<style>
-.container {
+<style scoped>
+.login-container {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-.main-content {
-  padding-top: 80px; /* 适当调整以适应 Header 的高度 */
+.login-box {
+  width: 400px;
+  border-radius: 10px;
 }
 
-/* 移动端的样式 */
-@media screen and (max-width: 600px) {
-  .container {
-    height: 100vh; /* 视口的全高 */
-  }
-
-  .main-content {
-    height: calc(100vh - 80px); /* 减去 Header 的高度 */
-    overflow-y: hidden; /* 防止内容超出并滚动 */
-  }
-
-  .my-swipe .van-swipe-item {
-    color: #fff;
-    font-size: 20px;
-    line-height: 150px;
-    text-align: center;
-    background-color: #39a9ed;
-    height: 100%;
-  }
+.content {
+  padding: 20px;
 }
 
-/* PC端的样式不需要特别调整 */
+.logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo img {
+  width: 200px;
+}
+
+.button-container, .el-form-item, .full-width-select {
+  text-align: center;
+  width: 100%; /* 确保宽度与容器相同 */
+}
+
+.full-width, .full-width-select {
+  width: 100%;
+}
+
+.divider {
+  text-align: center;
+  margin: 20px 0;
+  color: #ccc;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
 </style>
-

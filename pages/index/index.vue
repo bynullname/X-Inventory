@@ -14,6 +14,7 @@
       </div>
       <div v-else>
         <VideoMonitor />
+        <ControlArea />
         <InventoryData />
       </div>
     </div>
@@ -38,18 +39,27 @@ const isMobile = computed(() => {
   padding-top: 80px; /* 适当调整以适应 Header 的高度 */
 }
 
-.my-swipe .van-swipe-item {
-  color: #fff;
-  font-size: 20px;
-  line-height: 150px;
-  text-align: center;
-  background-color: #39a9ed;
-}
+/* 移动端的样式 */
+@media screen and (max-width: 600px) {
+  .container {
+    height: 100vh; /* 视口的全高 */
+  }
 
-/* PC端的样式 */
-@media screen and (min-width: 601px) {
-  .my-swipe {
-    display: none; /* 隐藏滑动组件 */
+  .main-content {
+    height: calc(100vh - 80px); /* 减去 Header 的高度 */
+    overflow-y: hidden; /* 防止内容超出并滚动 */
+  }
+
+  .my-swipe .van-swipe-item {
+    color: #fff;
+    font-size: 20px;
+    line-height: 150px;
+    text-align: center;
+    background-color: #39a9ed;
+    height: 100%;
   }
 }
+
+/* PC端的样式不需要特别调整 */
 </style>
+

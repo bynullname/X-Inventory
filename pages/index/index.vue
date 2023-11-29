@@ -27,7 +27,7 @@
               <el-input placeholder="输入盘点计划名称" class="full-width" v-model="inventoryPlanName"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" class="full-width" @click="createInventoryPlan">创建计划</el-button>
+              <el-button type="primary" class="full-width" @click="handleCreatePlan">创建计划</el-button>
             </el-form-item>
             <div class="divider">---------- or ----------</div>
             <el-form-item label="历史盘点计划">
@@ -39,12 +39,12 @@
                 v-for="plan in historyPlans"
                 :key="plan.value"
                 :label="plan.label"
-                :value="plan.value"                >
+                :value="plan.value">
               </el-option>
             </el-select>
           </el-form-item>
             <el-form-item>
-              <el-button type="success" class="full-width">继续盘点</el-button>
+              <el-button type="success" class="full-width" @click="handleContinuePlan">继续盘点</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -58,6 +58,16 @@ import {onMounted, reactive, ref } from 'vue';
 import { deviceConfig } from '~/config/index';
 import { ElMessage } from 'element-plus'
 import { useIsMobile } from '~/composables/useIsMobile';
+import { useInventoryApi } from '~/composables/useInventoryApi';
+
+const 
+{ 
+  historyPlans, 
+  fetchLatestInventoryPlans,
+  setActiveInventoryPlan,
+  createInventoryPlan, 
+  continueWithSelectedPlan 
+} = useInventoryApi();
 
 const isMobile = useIsMobile();
 
@@ -69,13 +79,22 @@ const loginForm = reactive({
 
 const inventoryPlanName = ref('');  // 盘点计划名称
 const selectedPlanId = ref(null);
-const historyPlans = ref([]); 
 
-onMounted(() => {
-  if (isMobile) {
-    navigateTo('/inventory');
+// onMounted(() => {
+//   // if (isMobile) {
+//   //   navigateTo('/inventory');
+//   // }
+//   fetchLatestInventoryPlans();  // 在组件加载时调用此函数
+// });
+
+onMounted(async () => {
+  // if (isMobile) {
+  //   navigateTo('/inventory');
+  // }
+  const response = await fetchLatestInventoryPlans();
+  if (!response.success) {
+    ElMessage.error(response.message);
   }
-  fetchLatestInventoryPlans();  // 在组件加载时调用此函数
 });
 
 
@@ -100,59 +119,26 @@ const handleLogin = async () => {
     // 处理请求错误
   }
 };
-//创建盘点计划
-const createInventoryPlan = async () => {
-  if (!inventoryPlanName.value) {
-    ElMessage({
-        message: '请输入盘点计划名称',
-        type: 'warning',
-    })
-    console.log('请输入盘点计划名称');
-    return;
-  }
 
-  try {
-    const response = await $fetch(deviceConfig.apiUrl+'/api/create_inventory_plan', {
-      method: 'POST',
-      credentials: 'include',  // 允许携带跨域 cookie
-      body: { inventory_plan_id: inventoryPlanName.value }
-    });
-
-    if (response.success) {
-      console.log(response.message);
-      ElMessage({
-        message: response.message,
-        type: 'success',
-      })
-    } else {
-      ElMessage.error('创建计划失败:' + response.message)
-      console.log('创建计划失败:', response.message);
-    }
-  } catch (error) {
-    ElMessage.error('创建计划失败:' + error)
-    console.error('创建计划请求失败:', error);
-  }
-};
-//获取历史盘点计划
-const fetchLatestInventoryPlans = async () => {
-  try {
-    const response = await $fetch(deviceConfig.apiUrl + '/api/inventory_plans/latest', {
-      method: 'GET',
-      credentials: 'include',  // 允许携带跨域 cookie
-    });
-
-    if (response && response.length > 0) {
-      historyPlans.value = response.map(plan => ({
-        value: plan.inventory_plan_id,
-        label: `${plan.inventory_plan_id} (创建于 ${plan.created_at})`
-      }));
-    }
-  } catch (error) {
-    console.error('获取历史盘点计划失败:', error);
+//处理创建计划
+const handleCreatePlan = async () => {
+  const response = await createInventoryPlan(inventoryPlanName.value);
+  if (response.success) {
+    ElMessage({ message: response.message, type: 'success' });
+  } else {
+    ElMessage.error(response.message);
   }
 };
 
-
+//继续盘点（选择的计划）
+const handleContinuePlan = async () => {
+  const response = await continueWithSelectedPlan(selectedPlanId.value);
+  if (response.success) {
+    ElMessage({ message: '成功继续盘点计划', type: 'success' });
+  } else {
+    ElMessage.error(response.message);
+  }
+};
 
 </script>
 

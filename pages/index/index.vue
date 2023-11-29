@@ -57,8 +57,10 @@
 import {onMounted, reactive, ref } from 'vue';
 import { deviceConfig } from '~/config/index';
 import { ElMessage } from 'element-plus'
+import { useIsMobile } from '~/composables/useIsMobile';
 
-const isMobile = ref(false);
+const isMobile = useIsMobile();
+
 const isLoggedIn = ref(false);
 const loginForm = reactive({
   username: 'admin',
@@ -70,8 +72,7 @@ const selectedPlanId = ref(null);
 const historyPlans = ref([]); 
 
 onMounted(() => {
-  if (window.navigator.userAgent.match(/mobile/i)) {
-    isMobile.value = true;
+  if (isMobile) {
     navigateTo('/inventory');
   }
   fetchLatestInventoryPlans();  // 在组件加载时调用此函数

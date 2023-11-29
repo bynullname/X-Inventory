@@ -40,10 +40,9 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-sizes="[100, 200, 300, 400]"
       :page-size="100"
       layout="prev, pager, next, jumper"
-      :total="1000"
+      :total="100000"
       :small="true"
       >
     </el-pagination>
@@ -52,16 +51,18 @@
 
 
 <script lang="ts" setup>
-
   import { ref, computed, onMounted, onUnmounted } from 'vue';
   import type { TableColumnCtx, TableInstance } from 'element-plus'
+  import { useIsMobile } from '~/composables/useIsMobile';
 
-  const isMobile = computed(() => {
-    return window.innerWidth <= 600;
-  });
-  const tableHeight = ref(null);
+  const isMobile = useIsMobile();
+
   const tableRef = ref(null);
-  interface Data {
+  const tableHeight = ref(null);
+  const selectedField = ref('location_number');
+  const searchQuery = ref('');
+
+  interface InventoryItem {
     location_number: string;
     sn: string;
     material_number: string;
@@ -73,48 +74,19 @@
     created_at: string;
     updated_at: string;
   }
-  const selectedField = ref('location_number');
-  const searchQuery = ref('');
-
-    // 初始筛选条件
-  const filterConditions = ref({
-    inventory_result: [],
-    remarks: []
-  });
-
-  const filter_column = ref([
-    'el-table_1_column_7',
-    'el-table_1_column_8'
-  ])
-
 
   const handleFilterChange = (
   value: { [key: string]: any },
-  row: Data,
-  column: TableColumnCtx<Data>
-) => {
-  // 遍历filter_column，检查value中包含的键
-  filter_column.value.forEach(columnKey => {
-    if (value[columnKey] !== undefined) {
-      // 找到对应的键，更新filterConditions
-      if (columnKey === 'el-table_1_column_7') {
-        filterConditions.value.inventory_result = Array.isArray(value[columnKey]) ? value[columnKey] : [value[columnKey]];
-      } else if (columnKey === 'el-table_1_column_8') {
-        filterConditions.value.remarks = Array.isArray(value[columnKey]) ? value[columnKey] : [value[columnKey]];
-      }
-    }
-  });
+  row: InventoryItem,
+  column: TableColumnCtx<InventoryItem>
+  ) => {
 
-  // 打印出更新后的过滤条件，用于调试
-  console.log(filterConditions.value['inventory_result']);
-  console.log(filterConditions.value['remarks']);
 
-};
+  };
 
   const updateTableHeight = () => {
     const table = tableRef.value?.$el;
     if (!table) return;
-
     const top = table.getBoundingClientRect().top;
     tableHeight.value = top <= 70 ? `${window.innerHeight - 70}px` : null;
   };

@@ -17,7 +17,7 @@ import { onMounted, ref } from 'vue';
 import { deviceConfig } from '~/config/index';
 
 const leftImageUrl = ref('/initial-image-url.png');
-const defaultImageUrl = '/logo.png'; // 默认图片 URL
+const defaultImageUrl = '/NoCamera.jpg'; // 默认图片 URL
 
 const setDefaultImage = (event) => {
   event.target.src = defaultImageUrl;

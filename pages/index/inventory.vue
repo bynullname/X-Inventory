@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Header />
+    <Header :activeInventoryPlanId="activeInventoryPlanId" />
     <div class="main-content">
       <div v-if="isMobile">
         <van-swipe class="my-swipe" indicator-color="white">
@@ -27,18 +27,31 @@
   import { useIsMobile } from '~/composables/useIsMobile';
   import useWebSocket from '~/composables/useWebSocket';
   import {useNotifyResult} from '~/composables/useNotifyResult'
+  import { useInventoryApi } from '~/composables/useInventoryApi'; // 确保这里的路径正确
+  import { ElMessage } from 'element-plus'
+
+  const { fetchActiveInventoryPlan } = useInventoryApi();
+  const activeInventoryPlanId = ref(null);
+
+
   const isMobile = useIsMobile();
   const { connectWebSocket } = useWebSocket();
   let socketTf, socketPointCloud;
   const wsData = ref([]);
   let reconnectInterval;
 
-  onMounted(() => {
+
+  onMounted(async () => {
+    const response = await fetchActiveInventoryPlan();
+    if (response.success) {
+      activeInventoryPlanId.value = response.activeInventoryPlanId;
+    } else {
+      ElMessage.error(response.message);
+    }
     connectWebSocket(socketTf, deviceConfig.wsUrl, wsData, reconnectInterval, data => {
       useNotifyResult(data)
     });
   });
-
 
 </script>
 

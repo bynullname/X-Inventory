@@ -26,7 +26,6 @@ export function useInventoryApi() {
     }
   };
 
-
   // 设置活跃计划
   const setActiveInventoryPlan = async (planId) => {
     try {
@@ -79,12 +78,32 @@ export function useInventoryApi() {
     }
   };
 
+  // 获取当前活跃的盘点计划
+  const fetchActiveInventoryPlan = async () => {
+    try {
+      const response = await $fetch(deviceConfig.apiUrl + '/api/get_active_inventory_plan', {
+        method: 'GET',
+        credentials: 'include',
+      });
+  
+      if (response && response.active_inventory_plan_id) {
+        return { success: true, activeInventoryPlanId: response.active_inventory_plan_id };
+      } else {
+        return { success: false, message: '没有找到活跃的盘点计划' };
+      }
+    } catch (error) {
+      return { success: false, message: '获取活跃盘点计划失败: ' + error };
+    }
+  };
+  
+
 
   return {
     historyPlans,
     fetchLatestInventoryPlans,
     setActiveInventoryPlan,
     createInventoryPlan,
-    continueWithSelectedPlan
+    continueWithSelectedPlan,
+    fetchActiveInventoryPlan
   };
 }

@@ -80,17 +80,10 @@ const loginForm = reactive({
 const inventoryPlanName = ref('');  // 盘点计划名称
 const selectedPlanId = ref(null);
 
-// onMounted(() => {
-//   // if (isMobile) {
-//   //   navigateTo('/inventory');
-//   // }
-//   fetchLatestInventoryPlans();  // 在组件加载时调用此函数
-// });
-
 onMounted(async () => {
-  // if (isMobile) {
-  //   navigateTo('/inventory');
-  // }
+  if (isMobile) {
+    navigateTo('/inventory');
+  }
   const response = await fetchLatestInventoryPlans();
   if (!response.success) {
     ElMessage.error(response.message);
@@ -125,6 +118,7 @@ const handleCreatePlan = async () => {
   const response = await createInventoryPlan(inventoryPlanName.value);
   if (response.success) {
     ElMessage({ message: response.message, type: 'success' });
+    navigateTo('/inventory');
   } else {
     ElMessage.error(response.message);
   }
@@ -135,6 +129,7 @@ const handleContinuePlan = async () => {
   const response = await continueWithSelectedPlan(selectedPlanId.value);
   if (response.success) {
     ElMessage({ message: '成功继续盘点计划', type: 'success' });
+    navigateTo('/inventory');
   } else {
     ElMessage.error(response.message);
   }

@@ -23,49 +23,19 @@
 
 <script setup>
   import { computed } from 'vue';
+  import { deviceConfig } from '~/config/index';
   import { useIsMobile } from '~/composables/useIsMobile';
   import useWebSocket from '~/composables/useWebSocket';
-
+  import {useNotifyResult} from '~/composables/useNotifyResult'
   const isMobile = useIsMobile();
   const { connectWebSocket } = useWebSocket();
   let socketTf, socketPointCloud;
   const wsData = ref([]);
   let reconnectInterval;
 
-
-
-
   onMounted(() => {
-    connectWebSocket(socketTf, 'ws://192.168.31.177:7878', wsData, reconnectInterval, data => {
-      if(data.msgType==='newItem'){
-        console.log(data.msg)
-        if(data.msg.inventory_result==='正常')
-        {
-          ElMessage({
-            message: data.msg.location_number + ' : ' + '正常',
-            type: 'success',
-          })
-        }else if(data.msg.inventory_result==='异常'){
-          if(data.msg.remarks==='有货无码')
-          {
-            ElMessage({
-              message: data.msg.location_number + ' : ' + '异常:有货无码',
-              type: 'warning',
-            })
-          }else if(data.msg.remarks==='无货无码'){
-            ElMessage({
-              message: data.msg.location_number + ' : ' + '异常:无货无码',
-              type: 'warning',
-            })
-          }
-          else{
-            ElMessage.error('其他错误')
-          }
-        }
-        else{
-            ElMessage.error('其他错误')
-        }
-      }
+    connectWebSocket(socketTf, deviceConfig.wsUrl, wsData, reconnectInterval, data => {
+      useNotifyResult(data)
     });
   });
 

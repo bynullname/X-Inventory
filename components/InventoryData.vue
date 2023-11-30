@@ -1,14 +1,14 @@
 <template>
   <div class="all-container">
     <div class="tableTools" v-if="!isMobile">
-      <el-select v-model="selectedField" placeholder="选择字段" class="select-field">
+    <el-select v-model="selectedField" placeholder="选择字段" class="select-field">
       <el-option label="库位号" value="location_number"></el-option>
       <el-option label="SN号" value="sn"></el-option>
       <el-option label="TagID" value="tag_id"></el-option>
     </el-select>
     <el-input v-model="searchQuery" placeholder="请输入搜索内容" class="search-input"></el-input>
     <el-button :icon="ElIconSearch" type="primary" class="button-style" @click="handleSearch">搜索</el-button>
-    <el-button :icon="ElIconDownload" type="success" class="button-style">导出表格</el-button>
+    <el-button :icon="ElIconDownload" type="success" class="button-style" @click="handleExport">导出表格</el-button>
   </div>
     <el-table
       ref="tableRef"
@@ -55,7 +55,15 @@
   import type { TableColumnCtx, TableInstance } from 'element-plus'
   import { useIsMobile } from '~/composables/useIsMobile';
   import { useInventoryApi } from '~/composables/useInventoryApi';
+  import { deviceConfig } from '~/config/index';
 
+
+
+  const props = defineProps({
+    activeInventoryPlanId: {
+      type: String,
+    }
+  })
   const 
   { 
     historyPlans, 
@@ -93,6 +101,9 @@
   const currentPage = ref<number>(1);
   const pageSize = ref<number>(100);
   const isDesktop = ref<boolean>(window.innerWidth > 768);
+  const activeInventoryPlanId = ref(null);
+
+
 
   // 更新表格高度
   const updateTableHeight = () => {
@@ -116,11 +127,22 @@
 
   };
 
+  // 获取活跃的盘点计划
+  const fetchActivePlanId = async () =>{
+    const response = await fetchActiveInventoryPlan();
+    if (response.success) {
+      activeInventoryPlanId.value = response.activeInventoryPlanId;
+      
+    } else {
+      ElMessage.error(response.message);
+    }
+  }
+
   // 获取指定页的数据
   const fetchPageData = async () => {
     const start = (currentPage.value - 1) * pageSize.value;
     const end = start + pageSize.value;
-    const data = await fetchInventoryItemsInRange(start, end, '2023年1月盘点'); // 替换为实际的库存计划ID
+    const data = await fetchInventoryItemsInRange(start, end, activeInventoryPlanId.value );
     if (data.success) {
       currentData.value = data.data as InventoryItem[]; // 类型断言
     }
@@ -130,13 +152,20 @@
   onMounted(async () => {
     window.addEventListener('resize', updateWindowWidth);
     window.addEventListener('scroll', updateTableHeight);
-    await fetchPageData();
-    const totalCountData = await fetchTotalInventoryItemsCountByPlan('2023年1月盘点');
+    await fetchActivePlanId();
+    const totalCountData = await fetchTotalInventoryItemsCountByPlan(activeInventoryPlanId.value );
     if (totalCountData.success) {
       totalItemsCount.value = totalCountData.count;
       console.log(totalCountData)
     }
+    console.log(props.activeInventoryPlanId)
+    await fetchPageData();
   });
+
+  const handleExport = () => {
+    const downloadUrl = deviceConfig.apiUrl + '/api/export_inventory_items/'+ activeInventoryPlanId.value;
+    window.open(downloadUrl, '_blank');
+  };
 
   onUnmounted(() => {
     window.removeEventListener('resize', updateWindowWidth);

@@ -8,14 +8,14 @@
             <VideoMonitor />
           </van-swipe-item>
           <van-swipe-item>
-            <InventoryData />
+            <InventoryData :activeInventoryPlanId="activeInventoryPlanId"/>
           </van-swipe-item>
         </van-swipe>
       </div>
       <div v-else>
         <VideoMonitor />
         <ControlArea />
-        <InventoryData />
+        <InventoryData :activeInventoryPlanId="activeInventoryPlanId"/>
       </div>
     </div>
   </div>

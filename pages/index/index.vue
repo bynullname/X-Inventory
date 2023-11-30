@@ -64,7 +64,6 @@ const
 { 
   historyPlans, 
   fetchLatestInventoryPlans,
-  setActiveInventoryPlan,
   createInventoryPlan, 
   continueWithSelectedPlan 
 } = useInventoryApi();

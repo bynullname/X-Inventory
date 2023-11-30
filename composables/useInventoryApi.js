@@ -138,20 +138,6 @@ export function useInventoryApi() {
     }
   };
 
-  // 导出库存项目为Excel
-  const exportInventoryItems = async (inventoryPlanId) => {
-    try {
-      const url = `${deviceConfig.apiUrl}/api/export_inventory_items/${inventoryPlanId}`;
-      const response = await $fetch(url, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      return { success: true, data: response };
-    } catch (error) {
-      return { success: false, message: '导出库存项目失败: ' + error };
-    }
-  };
-
 
   return {
     historyPlans,

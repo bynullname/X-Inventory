@@ -5,8 +5,8 @@
       <img :src="leftImageUrl" @error="setDefaultImage" alt="Camera 1" />
     </div>
     <div class="image-container">
-      <span class="camera-label">左侧相机</span>
-      <img :src="leftImageUrl" @error="setDefaultImage" alt="Camera 1" />
+      <span class="camera-label">右侧相机</span>
+      <img :src="rightImageUrl" @error="setDefaultImage" alt="Camera 1" />
     </div>
   </div>
 </template>
@@ -16,7 +16,8 @@
 import { onMounted, ref } from 'vue';
 import { deviceConfig } from '~/config/index';
 
-const leftImageUrl = ref('/initial-image-url.png');
+const leftImageUrl = ref('/NoCamera.jpg');
+const rightImageUrl = ref('/NoCamera.jpg');
 const defaultImageUrl = '/NoCamera.jpg'; // 默认图片 URL
 
 const setDefaultImage = (event) => {
@@ -26,6 +27,7 @@ const setDefaultImage = (event) => {
 const updateImage = () => {
   // 每隔0.2秒更新图像 URL
   leftImageUrl.value = `${deviceConfig.apiUrl}/api/image_left?timestamp=${new Date().getTime()}`;
+  rightImageUrl.value = `${deviceConfig.apiUrl}/api/image_right?timestamp=${new Date().getTime()}`;
 };
 
 onMounted(() => {

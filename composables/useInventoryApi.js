@@ -138,6 +138,35 @@ export function useInventoryApi() {
     }
   };
 
+  // 设置库存盘点状态
+  const setInventoryCheckStatus = async (status) => {
+    try {
+      const response = await $fetch(deviceConfig.apiUrl + '/api/set_inventory_check_status', {
+        method: 'POST',
+        credentials: 'include',
+        body: { status }
+      });
+
+      return response;
+    } catch (error) {
+      return { success: false, message: '设置库存盘点状态失败: ' + error };
+    }
+  };
+
+  // 获取库存盘点状态
+  const getInventoryCheckStatus = async () => {
+    try {
+      const response = await $fetch(deviceConfig.apiUrl + '/api/get_inventory_check_status', {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      return { success: true, inventoryCheckStarted: response.inventory_check_started };
+    } catch (error) {
+      return { success: false, message: '获取库存盘点状态失败: ' + error };
+    }
+  };
+  
 
   return {
     historyPlans,
@@ -149,5 +178,7 @@ export function useInventoryApi() {
     fetchInventoryItemsInRange,
     fetchTotalInventoryItemsCount,
     fetchTotalInventoryItemsCountByPlan,
+    setInventoryCheckStatus,
+    getInventoryCheckStatus
   };
 }

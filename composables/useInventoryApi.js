@@ -96,6 +96,61 @@ export function useInventoryApi() {
     }
   };
   
+  // 获取指定范围的库存项目
+  const fetchInventoryItemsInRange = async (start, end, inventoryPlanId) => {
+    try {
+      const url = `${deviceConfig.apiUrl}/api/inventory_items/range?start=${start}&end=${end}&inventory_plan_id=${inventoryPlanId}`;
+      const response = await $fetch(url, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      return { success: true, data: response };
+    } catch (error) {
+      return { success: false, message: '获取库存项目失败: ' + error };
+    }
+  };
+
+  // 获取库存项目总数
+  const fetchTotalInventoryItemsCount = async () => {
+    try {
+      const url = `${deviceConfig.apiUrl}/api/inventory_items/total_count`;
+      const response = await $fetch(url, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      return { success: true, count: response.total_count };
+    } catch (error) {
+      return { success: false, message: '获取库存项目总数失败: ' + error };
+    }
+  };
+
+  // 获取特定盘点计划的库存项目总数
+  const fetchTotalInventoryItemsCountByPlan = async (inventoryPlanId) => {
+    try {
+      const url = `${deviceConfig.apiUrl}/api/inventory_items/total_count_by_plan?inventory_plan_id=${inventoryPlanId}`;
+      const response = await $fetch(url, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      return { success: true, count: response.total_count };
+    } catch (error) {
+      return { success: false, message: '获取特定盘点计划的库存项目总数失败: ' + error };
+    }
+  };
+
+  // 导出库存项目为Excel
+  const exportInventoryItems = async (inventoryPlanId) => {
+    try {
+      const url = `${deviceConfig.apiUrl}/api/export_inventory_items/${inventoryPlanId}`;
+      const response = await $fetch(url, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      return { success: true, data: response };
+    } catch (error) {
+      return { success: false, message: '导出库存项目失败: ' + error };
+    }
+  };
 
 
   return {
@@ -104,6 +159,9 @@ export function useInventoryApi() {
     setActiveInventoryPlan,
     createInventoryPlan,
     continueWithSelectedPlan,
-    fetchActiveInventoryPlan
+    fetchActiveInventoryPlan,
+    fetchInventoryItemsInRange,
+    fetchTotalInventoryItemsCount,
+    fetchTotalInventoryItemsCountByPlan,
   };
 }

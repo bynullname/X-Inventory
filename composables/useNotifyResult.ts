@@ -1,6 +1,6 @@
 export function useNotifyResult(data:any) {
     if(data.msgType==='newItem'){
-        console.log(data.msg)
+        // console.log(data.msg)
         if(data.msg.inventory_result==='正常')
         {
           ElMessage({

@@ -42,7 +42,7 @@
       :current-page="currentPage"
       :page-size="100"
       layout="prev, pager, next, jumper"
-      :total="100000"
+      :total=totalItemsCount
       :small="true"
       >
     </el-pagination>
@@ -54,14 +54,22 @@
   import { ref, computed, onMounted, onUnmounted } from 'vue';
   import type { TableColumnCtx, TableInstance } from 'element-plus'
   import { useIsMobile } from '~/composables/useIsMobile';
+  import { useInventoryApi } from '~/composables/useInventoryApi';
 
-  const isMobile = useIsMobile();
+  const 
+  { 
+    historyPlans, 
+    fetchLatestInventoryPlans,
+    setActiveInventoryPlan,
+    createInventoryPlan,
+    continueWithSelectedPlan,
+    fetchActiveInventoryPlan,
+    fetchInventoryItemsInRange,
+    fetchTotalInventoryItemsCount,
+    fetchTotalInventoryItemsCountByPlan
+  } = useInventoryApi();
 
-  const tableRef = ref(null);
-  const tableHeight = ref(null);
-  const selectedField = ref('location_number');
-  const searchQuery = ref('');
-
+  // 定义库存项的接口
   interface InventoryItem {
     location_number: string;
     sn: string;
@@ -75,15 +83,18 @@
     updated_at: string;
   }
 
-  const handleFilterChange = (
-  value: { [key: string]: any },
-  row: InventoryItem,
-  column: TableColumnCtx<InventoryItem>
-  ) => {
+  const isMobile = useIsMobile();
+  const tableRef = ref<TableInstance | null>(null);
+  const tableHeight = ref<string | null>(null);
+  const selectedField = ref<string>('location_number');
+  const searchQuery = ref<string>('');
+  const currentData = ref<InventoryItem[]>([]);
+  const totalItemsCount = ref<number>(0);
+  const currentPage = ref<number>(1);
+  const pageSize = ref<number>(100);
+  const isDesktop = ref<boolean>(window.innerWidth > 768);
 
-
-  };
-
+  // 更新表格高度
   const updateTableHeight = () => {
     const table = tableRef.value?.$el;
     if (!table) return;
@@ -91,19 +102,40 @@
     tableHeight.value = top <= 70 ? `${window.innerHeight - 70}px` : null;
   };
 
+  // 处理表格行的类名
   const tableRowClassName = ({ rowIndex }: { rowIndex: number }) => {
     return rowIndex === 0 ? 'error-row' : rowIndex === 1 ? 'success-row' : '';
   };
 
-  const isDesktop = ref(window.innerWidth > 768);
-
+  // 更新窗口宽度
   const updateWindowWidth = () => {
     isDesktop.value = window.innerWidth > 768;
   };
 
-  onMounted(() => {
+  const handleFilterChange = (filters) =>{
+
+  };
+
+  // 获取指定页的数据
+  const fetchPageData = async () => {
+    const start = (currentPage.value - 1) * pageSize.value;
+    const end = start + pageSize.value;
+    const data = await fetchInventoryItemsInRange(start, end, '2023年1月盘点'); // 替换为实际的库存计划ID
+    if (data.success) {
+      currentData.value = data.data as InventoryItem[]; // 类型断言
+    }
+  };
+
+  // 在组件挂载时获取数据
+  onMounted(async () => {
     window.addEventListener('resize', updateWindowWidth);
     window.addEventListener('scroll', updateTableHeight);
+    await fetchPageData();
+    const totalCountData = await fetchTotalInventoryItemsCountByPlan('2023年1月盘点');
+    if (totalCountData.success) {
+      totalItemsCount.value = totalCountData.count;
+      console.log(totalCountData)
+    }
   });
 
   onUnmounted(() => {
@@ -111,54 +143,19 @@
     window.removeEventListener('scroll', updateTableHeight);
   });
 
-  // 生成模拟数据
-  const generateMockData = (): Data[] => {
-    let data = [];
-    for (let i = 0; i < 1000; i++) {
-      data.push({
-        location_number: `X3-1-2-${i}`,
-        sn: `${Math.floor(Math.random() * 100000)}`,
-        material_number: `${Math.floor(Math.random() * 100000)}`,
-        quantity: Math.floor(Math.random() * 100),
-        factory: `Factory ${i}`,
-        tag_id: `Tag-${i}`,
-        inventory_result: i % 2 === 0 ? '正常' : '异常',
-        remarks: `备注 ${i}`,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      });
-    }
-    return data;
-  };
-
-
-
-  const allData = ref(generateMockData());
-  const currentPage = ref(1);
-  const pageSize = ref(100);
-  const currentData = computed(() => {
-    const start = (currentPage.value - 1) * pageSize.value;
-    const end = start + pageSize.value;
-    return allData.value.slice(start, end);
-  });
-
-  const handleCurrentChange = (newPage: number) => {
+  // 处理当前页码更改
+  const handleCurrentChange = async (newPage: number) => {
     currentPage.value = newPage;
+    await fetchPageData();
   };
 
-  const handleSizeChange = (newSize: number) => {
-    pageSize.value = newSize;
+  // 搜索功能（需要根据实际情况调整）
+  const handleSearch = async () => {
+    // 这里可以添加搜索逻辑，可能需要调整后端API或添加额外的API调用
   };
 
-  const handleSearch = () => {
-    if (searchQuery.value && selectedField.value) {
-      // 根据选定字段过滤数据
-      allData.value = allData.value.filter(item => item[selectedField.value].toString().includes(searchQuery.value));
-      currentPage.value = 1; // 重置到第一页
-    } else {
-      // 如果搜索框为空，则显示所有数据
-      allData.value = generateMockData();
-    }
+  const handleSizeChange = async () => {
+    // 这里可以添加搜索逻辑，可能需要调整后端API或添加额外的API调用
   };
 </script>
 

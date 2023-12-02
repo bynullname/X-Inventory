@@ -6,7 +6,9 @@
     <div class="draggable-line horizontal right-scale-line" :style="{ right: (1 - rightScaleLinePercent) * 100 + '%' }" @mousedown="startDragHorizontal"></div>
     <div class="vertical-dashed-line"></div>
     <div class="horizontal-dashed-line" :style="{ top: dashedLineTop }"></div>
-
+    <div class="image-overlay top-boundary" :style="{ height: topScaleLinePercent * 100 + '%' }"></div>
+    <div class="image-overlay left-boundary" :style="{ width: leftScaleLinePercent * 100 + '%' }"></div>
+    <div class="image-overlay right-boundary" :style="{ width: (1 - rightScaleLinePercent) * 100 + '%' }"></div>
     <img :src="imageUrl" @error="setDefaultImage" :alt="label" />
   </div>
 </template>
@@ -212,6 +214,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 100;
 }
 
 .vertical-dashed-line {
@@ -230,6 +233,29 @@ onMounted(() => {
     z-index: 10;
   }
 
+  .image-overlay.top-boundary {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .image-overlay.left-boundary {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .image-overlay.right-boundary {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+  }
 
 /* 媒体查询，针对手机端或小屏幕设备 */
 @media (max-width: 750px) {

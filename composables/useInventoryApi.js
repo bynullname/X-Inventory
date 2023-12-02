@@ -166,7 +166,46 @@ export function useInventoryApi() {
       return { success: false, message: '获取库存盘点状态失败: ' + error };
     }
   };
-  
+
+    // 获取当前设置的 ROI
+  const fetchCameraRoi = async () => {
+    try {
+      const response = await $fetch(deviceConfig.apiUrl + '/api/get_camera_roi', {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (response && response.camera_roi) {
+        return { success: true, cameraRoi: response.camera_roi };
+      } else {
+        return { success: false, message: '未找到 ROI 设置' };
+      }
+    } catch (error) {
+      return { success: false, message: '获取 ROI 设置失败: ' + error };
+    }
+  };
+
+  // 设置新的 ROI
+  const setCameraRoi = async (roiData) => {
+    if (!roiData) {
+      return { success: false, message: '请输入 ROI 数据' };
+    }
+
+    try {
+      const response = await $fetch(deviceConfig.apiUrl + '/api/set_camera_roi', {
+        method: 'POST',
+        credentials: 'include',
+        body: { camera_roi: roiData }
+      });
+
+      return response.success
+        ? { success: true, message: 'ROI 设置成功' }
+        : { success: false, message: response.error || 'ROI 设置失败' };
+    } catch (error) {
+      return { success: false, message: '设置 ROI 请求失败: ' + error };
+    }
+  };
+
 
   return {
     historyPlans,
@@ -179,6 +218,8 @@ export function useInventoryApi() {
     fetchTotalInventoryItemsCount,
     fetchTotalInventoryItemsCountByPlan,
     setInventoryCheckStatus,
-    getInventoryCheckStatus
+    getInventoryCheckStatus,
+    fetchCameraRoi,
+    setCameraRoi
   };
 }

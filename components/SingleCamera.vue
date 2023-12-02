@@ -5,7 +5,7 @@
     <div class="draggable-line horizontal left-scale-line" :style="{ left: leftScaleLinePercent * 100 + '%' }" @mousedown="startDragHorizontal"></div>
     <div class="draggable-line horizontal right-scale-line" :style="{ right: (1 - rightScaleLinePercent) * 100 + '%' }" @mousedown="startDragHorizontal"></div>
     <div class="vertical-dashed-line"></div>
-    <div class="horizontal-dashed-line"></div>
+    <div class="horizontal-dashed-line" :style="{ top: dashedLineTop }"></div>
 
     <img :src="imageUrl" @error="setDefaultImage" :alt="label" />
   </div>
@@ -14,6 +14,11 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { deviceConfig } from '~/config/index';
+
+const cameraRoiBottom = ref(deviceConfig.camera_roi_bottom);
+// 计算百分比表示的 top 值
+const dashedLineTop = computed(() => `${cameraRoiBottom.value * 100}%`);
+
 
 const props = defineProps({
   label: String,
@@ -29,9 +34,9 @@ const props = defineProps({
 });
 
 const imageUrl = ref(props.defaultImageUrl);
-const topScaleLinePercent = useState('topScaleLinePercent',()=> 0.3);
-const leftScaleLinePercent = useState('leftScaleLinePercent',()=> 0.1);
-const rightScaleLinePercent = useState('rightScaleLinePercent',()=> 0.9);
+const topScaleLinePercent = useState('topScaleLinePercent');
+const leftScaleLinePercent = useState('leftScaleLinePercent');
+const rightScaleLinePercent = useState('rightScaleLinePercent');
 
 const setDefaultImage = (event) => {
   event.target.src = props.defaultImageUrl;
@@ -219,7 +224,7 @@ onMounted(() => {
 
   .horizontal-dashed-line {
     position: absolute;
-    top: 80%;
+    top: 90%;
     width: 100%;
     border-top: 2px dashed rgb(255, 0, 0); /* 黑色虚线 */
     z-index: 10;

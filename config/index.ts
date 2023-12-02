@@ -6,5 +6,6 @@ export const deviceConfig = {
     apiUrl: `http://${currentHost}:5000`,
     wsUrl: `ws://${currentHost}:7878`,
     apiKey: '',
+    camera_roi_bottom:0.9
     // 其他配置...
 };

@@ -72,8 +72,8 @@ const isMobile = useIsMobile();
 
 const isLoggedIn = ref(false);
 const loginForm = reactive({
-  username: 'admin',
-  password: '1234567890'
+  username: '',
+  password: ''
 });
 
 const inventoryPlanName = ref('');  // 盘点计划名称

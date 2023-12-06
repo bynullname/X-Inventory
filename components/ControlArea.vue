@@ -1,5 +1,17 @@
 <template>
   <div class="center-container">
+    
+
+    <el-upload
+      class="upload-demo"
+      :action="uploadAction"
+      :on-success="handleUploadSuccess"
+      :on-error="handleUploadError"
+      :headers="headers"
+      :before-upload="beforeUpload"
+    >
+      <el-button :icon="ElIconUpload" type="success" class="button-style" @click="handleExport">上传WMS数据</el-button>
+    </el-upload>
       <el-switch
           v-model="inventoryState"
           class="mb-2 switch-style"
@@ -14,6 +26,8 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useInventoryApi } from '~/composables/useInventoryApi'
+import { deviceConfig } from '~/config/index'; // 引入配置文件
+const uploadAction = ref(`${deviceConfig.apiUrl}/api/upload_wms_excel`);
 
 const { setInventoryCheckStatus, getInventoryCheckStatus } = useInventoryApi()
 const inventoryState = ref(false)
@@ -53,17 +67,20 @@ const handleSwitchChange = async (newState) => {
 
 </script>
 
-<style>
+<style scoped>
   .center-container {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    flex-direction: column;
     align-items: center;
+    gap: 2px;
     background-color: #ebebeb; /* 略深的灰色背景 */
-    padding: 20px; /* 添加一些内边距 */
-    border-radius: 10px; /* 轻微的圆角边框 */
   }
 
   .switch-style {
-    margin-right: 20px; /* 两个组件之间的间距 */
   }
+  .button-style .el-icon {
+    font-size: 1.2em;
+  }
+  
 </style>

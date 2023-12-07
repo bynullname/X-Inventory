@@ -2,21 +2,9 @@
   <div class="container">
     <Header :activeInventoryPlanId="activeInventoryPlanId" />
     <div class="main-content">
-      <div v-if="isMobile">
-        <van-swipe class="my-swipe" indicator-color="white">
-          <van-swipe-item>
-            <VideoMonitor />
-          </van-swipe-item>
-          <van-swipe-item>
-            <InventoryData :activeInventoryPlanId="activeInventoryPlanId"/>
-          </van-swipe-item>
-        </van-swipe>
-      </div>
-      <div v-else>
-        <VideoMonitor />
-        <ControlArea />
-        <InventoryData :activeInventoryPlanId="activeInventoryPlanId"/>
-      </div>
+      <ControlArea class="control"/>
+      <VideoMonitor class="monitor"/>
+        <!-- <InventoryData :activeInventoryPlanId="activeInventoryPlanId"/> -->
     </div>
   </div>
 </template>
@@ -59,31 +47,32 @@
 .container {
   display: flex;
   flex-direction: column;
+  height: 100vh;
 }
 
 .main-content {
-  padding-top: 70px; /* 适当调整以适应 Header 的高度 */
-}
-
-/* 移动端的样式 */
-@media screen and (max-width: 600px) {
-  .container {
-    height: 100vh; /* 视口的全高 */
-  }
-
-  .main-content {
-    height: calc(100vh - 80px); /* 减去 Header 的高度 */
+    margin-top: 70px;
+    height: calc(100vh - 70px); /* 减去 Header 的高度 */
     overflow-y: hidden; /* 防止内容超出并滚动 */
-  }
-
-  .my-swipe .van-swipe-item {
-    color: #fff;
-    font-size: 20px;
-    line-height: 150px;
-    text-align: center;
-    background-color: #39a9ed;
-    height: 100%;
-  }
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background-image: url('/monitorBG.webp'); /* 添加背景图 */
+    background-size: cover; /* 确保背景图覆盖整个容器 */
+    background-position: center; /* 背景图居中 */
 }
+
+.control{
+  /* width: 100%; */
+  height: 150px;
+  min-height: 150px;
+}
+
+.monitor{
+  flex: 1; /* 占据剩余空间 */
+  width: 100%;
+  overflow-y: auto; /* 如果内容超出高度，允许滚动 */
+}
+
 </style>
 

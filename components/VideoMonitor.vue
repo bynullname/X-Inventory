@@ -1,7 +1,7 @@
 <template>
   <div class="video-monitor">
-    <SingleCamera label="左侧相机" dir="left" />
-    <div class="camera-control">
+    <SingleCamera class="camera" label="左侧相机" dir="left" />
+    <!-- <div class="camera-control">
         <el-switch
         class="wide-switch"
         v-model="syncIndependent"
@@ -9,8 +9,8 @@
         inactive-text="独立">
       </el-switch>
       <el-button type="success" @click="handleSave">保存 ROI</el-button>
-    </div>
-    <SingleCamera label="右侧相机" dir="right"/>
+    </div> -->
+    <SingleCamera class="camera" label="右侧相机" dir="right"/>
   </div>
 </template>
 
@@ -79,9 +79,15 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 30px;
+  gap: 50px;
   padding: 20px;
-  background-color: #f5f5f5;
+  background-color: transparent;
+}
+
+.camera{
+  width: 45%;
+  max-width: 1080px;
+  height: auto;
 }
 
 .camera-control {

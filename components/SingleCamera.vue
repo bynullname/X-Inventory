@@ -141,24 +141,15 @@ onMounted(() => {
 
 
 <style scoped>
-.video-monitor {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 80px;
-  padding: 20px;
-  background-color: #f5f5f5;
-}
-
 .image-container {
-  width: 640px;
-  height: auto;
-  box-shadow: 0 6px 7px rgba(0, 0, 0, 0.1);
+
+  box-shadow: 30px 30px 50px rgba(33, 35, 36, 0.6); /* 淡蓝色阴影 */
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
   position: relative;
+  border-radius: 50px;
 }
 
 .image-container img {
@@ -176,7 +167,7 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 10px;
-  background-color: rgba(0, 123, 255, 0.5);
+  background-color: rgba(255, 0, 0, 0.5); /* 不同颜色以区分 */
   cursor: ns-resize;
   top: 50%; /* 初始位置在容器中间 */
 }
@@ -201,7 +192,7 @@ onMounted(() => {
 
 .camera-label {
   position: absolute;
-  top: 10px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #007bff;
@@ -222,7 +213,7 @@ onMounted(() => {
     left: 50%;
     height: 100%;
     border-left: 2px dashed rgb(255, 0, 0); /* 黑色虚线 */
-    z-index: 10;
+    z-index: 100;
   }
 
   .horizontal-dashed-line {
@@ -230,7 +221,7 @@ onMounted(() => {
     top: 90%;
     width: 100%;
     border-top: 2px dashed rgb(255, 0, 0); /* 黑色虚线 */
-    z-index: 10;
+    z-index: 100;
   }
 
   .image-overlay.top-boundary {
@@ -238,7 +229,7 @@ onMounted(() => {
     top: 0;
     left: 0;
     width: 100%;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(42, 163, 254, 0.5);
   }
 
   .image-overlay.left-boundary {
@@ -246,7 +237,7 @@ onMounted(() => {
     top: 0;
     left: 0;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(42, 163, 254, 0.5);
   }
 
   .image-overlay.right-boundary {
@@ -254,7 +245,7 @@ onMounted(() => {
     top: 0;
     right: 0;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(42, 163, 254, 0.5);
   }
 
 /* 媒体查询，针对手机端或小屏幕设备 */

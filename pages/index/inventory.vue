@@ -19,7 +19,7 @@
   import { ElMessage } from 'element-plus'
 
   const { fetchActiveInventoryPlan } = useInventoryApi();
-  const activeInventoryPlanId = ref(null);
+  const activeInventoryPlanId = useState('activeInventoryPlanId')
 
 
   const isMobile = useIsMobile();
@@ -30,12 +30,6 @@
 
 
   onMounted(async () => {
-    const response = await fetchActiveInventoryPlan();
-    if (response.success) {
-      activeInventoryPlanId.value = response.activeInventoryPlanId;
-    } else {
-      ElMessage.error(response.message);
-    }
     connectWebSocket(socketTf, deviceConfig.wsUrl, wsData, reconnectInterval, data => {
       useNotifyResult(data)
     });

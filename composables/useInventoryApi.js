@@ -139,7 +139,7 @@ export function useInventoryApi() {
   };
 
   // 设置库存盘点状态
-  const setInventoryCheckStatus = async (status) => {
+  const setInventorySwitchStatus = async (status) => {
     try {
       const response = await $fetch(deviceConfig.apiUrl + '/api/set_inventory_switch_status', {
         method: 'POST',
@@ -153,15 +153,15 @@ export function useInventoryApi() {
     }
   };
 
-  // 获取库存盘点状态
-  const getInventoryCheckStatus = async () => {
+  // 获取库存盘点开关状态
+  const getInventorySwitchStatus = async () => {
     try {
       const response = await $fetch(deviceConfig.apiUrl + '/api/get_inventory_switch_status', {
         method: 'GET',
         credentials: 'include'
       });
 
-      return { success: true, inventoryCheckStarted: response.inventory_check_started };
+      return { success: true, inventory_switch_status: response.inventory_switch_status };
     } catch (error) {
       return { success: false, message: '获取库存盘点状态失败: ' + error };
     }
@@ -217,8 +217,8 @@ export function useInventoryApi() {
     fetchInventoryItemsInRange,
     fetchTotalInventoryItemsCount,
     fetchTotalInventoryItemsCountByPlan,
-    setInventoryCheckStatus,
-    getInventoryCheckStatus,
+    setInventorySwitchStatus,
+    getInventorySwitchStatus,
     fetchCameraRoi,
     setCameraRoi
   };

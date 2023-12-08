@@ -5,7 +5,7 @@
     <div class="inventory-plan-wrapper" v-if="!isMobile">
       <div class="inventory-plan">
         <span>当前盘点计划</span>
-        <span>{{ props.activeInventoryPlanId }}</span>
+        <span>{{ activeInventoryPlanId }}</span>
       </div>
     </div>
   </header>
@@ -13,14 +13,9 @@
 
 
 <script lang="ts" setup>
-  const props = defineProps({
-    activeInventoryPlanId: {
-      type: String,
-    }
-  })
   import { useIsMobile } from '~/composables/useIsMobile';
   const isMobile = useIsMobile();
-
+  const activeInventoryPlanId = useState('activeInventoryPlanId',()=>'')
 </script>
 
 <style scoped>

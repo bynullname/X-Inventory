@@ -141,7 +141,7 @@ export function useInventoryApi() {
   // 设置库存盘点状态
   const setInventoryCheckStatus = async (status) => {
     try {
-      const response = await $fetch(deviceConfig.apiUrl + '/api/set_inventory_check_status', {
+      const response = await $fetch(deviceConfig.apiUrl + '/api/set_inventory_switch_status', {
         method: 'POST',
         credentials: 'include',
         body: { status }
@@ -156,7 +156,7 @@ export function useInventoryApi() {
   // 获取库存盘点状态
   const getInventoryCheckStatus = async () => {
     try {
-      const response = await $fetch(deviceConfig.apiUrl + '/api/get_inventory_check_status', {
+      const response = await $fetch(deviceConfig.apiUrl + '/api/get_inventory_switch_status', {
         method: 'GET',
         credentials: 'include'
       });

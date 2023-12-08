@@ -29,7 +29,6 @@
     import { ref } from 'vue'
     import { Delete, Edit, Search,Download, Share, Upload, Switch} from '@element-plus/icons-vue'
     import { genFileId } from 'element-plus'
-    import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
     import { useInventoryApi } from '~/composables/useInventoryApi'
     import { deviceConfig } from '~/config/index'; // 引入配置文件
     const uploadAction = ref(`${deviceConfig.apiUrl}/api/upload_wms_excel`);

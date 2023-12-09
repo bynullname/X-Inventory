@@ -7,7 +7,7 @@
       <SetRoi />
     </div>
     <div class="sub-container">
-      <CompairData />
+      <CompareData />
     </div>
   </div>
 </template>

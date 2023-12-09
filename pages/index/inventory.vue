@@ -29,6 +29,7 @@
   let reconnectInterval;
 
 
+
   onMounted(async () => {
     connectWebSocket(socketTf, deviceConfig.wsUrl, wsData, reconnectInterval, data => {
       useNotifyResult(data)

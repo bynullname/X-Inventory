@@ -206,6 +206,34 @@ export function useInventoryApi() {
     }
   };
 
+  const startCompare = async () => {
+    try {
+      const response = await $fetch(deviceConfig.apiUrl + '/api/start_compare', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      return response;
+    } catch (error) {
+      return { success: false, message: '启动数据分析失败: ' + error };
+    }
+  };
+
+  const getCompareProgress = async () => {
+    try {
+      const response = await $fetch(deviceConfig.apiUrl + '/api/get_compare_progress', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      return { 
+        success: response.success, 
+        isRunning: response.isRunning, 
+        progress: response.progress 
+      };
+    } catch (error) {
+      return { success: false, message: '获取数据分析进度失败: ' + error };
+    }
+  };
+
 
   return {
     historyPlans,
@@ -220,6 +248,8 @@ export function useInventoryApi() {
     setInventorySwitchStatus,
     getInventorySwitchStatus,
     fetchCameraRoi,
-    setCameraRoi
+    setCameraRoi,
+    startCompare,
+    getCompareProgress,
   };
 }

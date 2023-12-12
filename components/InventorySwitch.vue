@@ -38,7 +38,7 @@
   import { deviceConfig } from '~/config/index'; // 引入配置文件
   const { fetchActiveInventoryPlan, setInventorySwitchStatus, getInventorySwitchStatus,fetchTotalInventoryItemsCountByPlan } = useInventoryApi()
   const switchDialogVisible = ref(false)
-  const inventoryState = ref(false)
+  const inventoryState = useState('inventoryState',()=>false)
   const activeInventoryPlanId = useState('activeInventoryPlanId',()=>'')
   const totalInventoryCount = useState('totalInventoryCount',()=>0)
   let intervalId = null; // 用于存储定时器的引用
@@ -65,6 +65,20 @@
     }
   }
 
+  watch(inventoryState, async (newState) => {
+    try {
+      const response = await setInventorySwitchStatus(newState)
+      if (response.message === 'Inventory check status updated') {
+        ElMessage({
+          message: newState ? '盘点已开启' : '盘点已关闭',
+          type: 'success',
+        })
+      }
+    } catch (error) {
+      ElMessage.error('设置库存盘点状态失败')
+      inventoryState.value = !newState // 重置状态
+    }
+  })
   // 用户取消盘点状态改变
   const cancelSwitchChange = () => {
     switchDialogVisible.value = false

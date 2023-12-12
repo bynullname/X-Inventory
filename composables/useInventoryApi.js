@@ -234,6 +234,23 @@ export function useInventoryApi() {
     }
   };
 
+    // 获取当前活跃的 WMS Excel 文件名
+    const fetchActiveWmsExcel = async () => {
+      try {
+        const response = await $fetch(deviceConfig.apiUrl + '/api/get_active_wms_excel', {
+          method: 'GET',
+          credentials: 'include',
+        });
+    
+        if (response && response.success) {
+          return { success: true, activeWmsExcel: response.active_wms_excel };
+        } else {
+          return { success: false, message: '未找到活跃的 WMS Excel 文件' };
+        }
+      } catch (error) {
+        return { success: false, message: '获取活跃的 WMS Excel 文件失败: ' + error };
+      }
+    };
 
   return {
     historyPlans,
@@ -251,5 +268,6 @@ export function useInventoryApi() {
     setCameraRoi,
     startCompare,
     getCompareProgress,
+    fetchActiveWmsExcel
   };
 }

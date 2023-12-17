@@ -1,9 +1,15 @@
 <template>
   <div class="image-container">
     <span class="camera-label">{{ label }}</span>
-    <div class="draggable-line vertical top-scale-line" :style="{ top: topScaleLinePercent * 100 + '%' }" @mousedown="startDragVertical"></div>
-    <div class="draggable-line horizontal left-scale-line" :style="{ left: leftScaleLinePercent * 100 + '%' }" @mousedown="startDragHorizontal"></div>
-    <div class="draggable-line horizontal right-scale-line" :style="{ right: (1 - rightScaleLinePercent) * 100 + '%' }" @mousedown="startDragHorizontal"></div>
+    <div class="draggable-line vertical top-scale-line" 
+       :style="{ top: topScaleLinePercent * 100 + '%' , height : lineWidth + 'px'}"
+       @mousedown="startDragVertical"></div>
+    <div class="draggable-line horizontal left-scale-line" 
+       :style="{ left: leftScaleLinePercent * 100 + '%', width: lineWidth + 'px' }" 
+       @mousedown="startDragHorizontal"></div>
+    <div class="draggable-line horizontal right-scale-line" 
+        :style="{ right: (1 - rightScaleLinePercent) * 100 + '%', width: lineWidth + 'px' }" 
+        @mousedown="startDragHorizontal"></div>
     <div class="vertical-dashed-line"></div>
     <div class="horizontal-dashed-line" :style="{ top: dashedLineTop }"></div>
     <div class="image-overlay top-boundary" :style="{ height: topScaleLinePercent * 100 + '%' }"></div>
@@ -17,8 +23,8 @@
 import { ref, onMounted } from 'vue';
 import { deviceConfig } from '~/config/index';
 
+const lineWidth = ref(4); // 刻度线宽
 const cameraRoiBottom = ref(deviceConfig.camera_roi_bottom);
-// 计算百分比表示的 top 值
 const dashedLineTop = computed(() => `${cameraRoiBottom.value * 100}%`);
 
 
@@ -64,7 +70,7 @@ const onDragVertical = (e) => {
   const newTop = startTop + e.clientY - startY;
   const containerHeight = draggableLineVertical.parentElement.offsetHeight;
   const oneThirdContainerHeight = containerHeight * 2 / 3;
-  const lineHalfHeight = 5; // 假设线高为 10px，一半是 5px
+  const lineHalfHeight = lineWidth.value / 2;
 
   let adjustedTop = newTop;
   if (newTop < 0) {
@@ -72,9 +78,6 @@ const onDragVertical = (e) => {
   } else if (newTop > oneThirdContainerHeight - lineHalfHeight) {
     adjustedTop = oneThirdContainerHeight - lineHalfHeight;
   }
-
-
-  draggableLineVertical.style.top = `${adjustedTop}px`;
   topScaleLinePercent.value = parseFloat(((adjustedTop + lineHalfHeight) / containerHeight).toFixed(2));
 };
 
@@ -100,29 +103,29 @@ const startDragHorizontal = (e) => {
 const onDragHorizontal = (e) => {
   const newLeft = startLeft + e.clientX - startX;
   const containerWidth = draggableLineHorizontal.parentElement.offsetWidth;
-  const halfLineWidth = 5; // 拖动线宽度的一半
+  const halfLineWidth = lineWidth.value / 2;
 
   // 处理左侧拖动线
   if (draggableLineHorizontal.classList.contains('left-scale-line')) {
-    if (newLeft < -halfLineWidth) {
-      draggableLineHorizontal.style.left = `-${halfLineWidth}px`;
-    } else if (newLeft > containerWidth / 2 - halfLineWidth) {
-      draggableLineHorizontal.style.left = `${containerWidth / 2 - halfLineWidth}px`;
-    } else {
-      draggableLineHorizontal.style.left = `${newLeft}px`;
-    }
+    // if (newLeft < -halfLineWidth) {
+    //   draggableLineHorizontal.style.left = `-${halfLineWidth}px`;
+    // } else if (newLeft > containerWidth / 2 - halfLineWidth) {
+    //   draggableLineHorizontal.style.left = `${containerWidth / 2 - halfLineWidth}px`;
+    // } else {
+    //   draggableLineHorizontal.style.left = `${newLeft}px`;
+    // }
     leftScaleLinePercent.value = parseFloat(((newLeft + halfLineWidth) / containerWidth).toFixed(2));
   }
 
   // 处理右侧拖动线
   else if (draggableLineHorizontal.classList.contains('right-scale-line')) {
-    if (newLeft < containerWidth / 2 - halfLineWidth) {
-      draggableLineHorizontal.style.left = `${containerWidth / 2 - halfLineWidth}px`;
-    } else if (newLeft > containerWidth - halfLineWidth) {
-      draggableLineHorizontal.style.left = `${containerWidth - halfLineWidth}px`;
-    } else {
-      draggableLineHorizontal.style.left = `${newLeft}px`;
-    }
+    // if (newLeft < containerWidth / 2 - halfLineWidth) {
+    //   draggableLineHorizontal.style.left = `${containerWidth / 2 - halfLineWidth}px`;
+    // } else if (newLeft > containerWidth - halfLineWidth) {
+    //   draggableLineHorizontal.style.left = `${containerWidth - halfLineWidth}px`;
+    // } else {
+    //   draggableLineHorizontal.style.left = `${newLeft}px`;
+    // }
     rightScaleLinePercent.value = parseFloat(((newLeft + halfLineWidth) / containerWidth).toFixed(2));
   }
 };

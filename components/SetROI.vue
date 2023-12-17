@@ -3,7 +3,7 @@
       <div class="roi-grid">
         <div>
           <el-text class="label-text" type="primary">Top</el-text>
-          <el-input-number v-model="topScaleLinePercent" :precision="2" :step="0.02" :max="0.8" :min="0.1" />
+          <el-input-number v-model="topScaleLinePercent" :precision="2" :step="0.01" :max="0.8" :min="0" />
         </div>
         <div>
           <el-input-number v-model="bottomValue" :precision="2" :step="0.02" :max="1" :min="0.6" />
@@ -12,10 +12,10 @@
         </div>
         <div>
           <el-text class="label-text" type="primary">Left</el-text>
-          <el-input-number v-model="leftScaleLinePercent" :precision="2" :step="0.02" :max="0.49" :min="0.01" />
+          <el-input-number v-model="leftScaleLinePercent" :precision="2" :step="0.01" :max="0.5" :min="0.0" />
         </div>
         <div>
-          <el-input-number v-model="rightScaleLinePercent" :precision="2" :step="0.02" :max="0.99" :min="0.51" />
+          <el-input-number v-model="rightScaleLinePercent" :precision="2" :step="0.01" :max="1.0" :min="0.5" />
           <el-text class="label-text" type="primary">&ensp;Right&ensp;</el-text>
         </div>
       </div>

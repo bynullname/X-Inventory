@@ -42,7 +42,7 @@
 
 
   <script setup lang="ts">
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, watch} from 'vue'
   import { Plus, Download, Share, Upload, Switch} from '@element-plus/icons-vue'
   import { useInventoryApi } from '~/composables/useInventoryApi';
   import { deviceConfig } from '~/config/index';
@@ -73,24 +73,25 @@
     }
   };
 
-    // 在用户确认后执行比对
-    const confirmAndStartComparison = async () => {
-      // 关闭盘点功能
-      inventoryState.value = false
-      switchDialogVisible.value = false; // 关闭对话框
-      // 执行原有的比对逻辑
-      const response:any = await startCompare();
-      if (response.success) {
-        ElMessage({
-          message: '数据分析任务已启动',
-          type: 'success',
-        });
-        queryProgress();
-      } else {
-        ElMessage.error(`启动数据分析失败: ${response.message}`);
-      }
-    };
+  // 在用户确认后执行比对
+  const confirmAndStartComparison = async () => {
+    // 关闭盘点功能
+    inventoryState.value = false
+    await setInventorySwitchStatus(inventoryState.value)
 
+    switchDialogVisible.value = false; // 关闭对话框
+    // 执行原有的比对逻辑
+    const response:any = await startCompare();
+    if (response.success) {
+      ElMessage({
+        message: '数据分析任务已启动',
+        type: 'success',
+      });
+      queryProgress();
+    } else {
+      ElMessage.error(`启动数据分析失败: ${response.message}`);
+    }
+  };
 
   // 查询进度并处理全屏加载状态
   const queryProgress = async () => {
@@ -118,6 +119,14 @@
       }
     }
   };
+
+  // 监控比对任务的运行状态
+  watch(isRunning, (newVal, oldVal) => {
+    if (oldVal === true && newVal === false) {
+      // 任务刚刚完成，触发下载
+      handleExport();
+    }
+  })
 
   // 挂载时开始定时查询进度
   onMounted(() => {

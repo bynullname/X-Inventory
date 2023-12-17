@@ -65,20 +65,20 @@
     }
   }
 
-  watch(inventoryState, async (newState) => {
-    try {
-      const response = await setInventorySwitchStatus(newState)
-      if (response.message === 'Inventory check status updated') {
-        ElMessage({
-          message: newState ? '盘点已开启' : '盘点已关闭',
-          type: 'success',
-        })
-      }
-    } catch (error) {
-      ElMessage.error('设置库存盘点状态失败')
-      inventoryState.value = !newState // 重置状态
-    }
-  })
+  // watch(inventoryState, async (newState) => {
+  //   try {
+  //     const response = await setInventorySwitchStatus(newState)
+  //     if (response.message === 'Inventory check status updated') {
+  //       ElMessage({
+  //         message: newState ? '盘点已开启' : '盘点已关闭',
+  //         type: 'success',
+  //       })
+  //     }
+  //   } catch (error) {
+  //     ElMessage.error('设置库存盘点状态失败')
+  //     inventoryState.value = !newState // 重置状态
+  //   }
+  // })
   // 用户取消盘点状态改变
   const cancelSwitchChange = () => {
     switchDialogVisible.value = false

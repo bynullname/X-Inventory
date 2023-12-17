@@ -1,7 +1,8 @@
 <template>
   <header class="header">
-    <img class="logo" src="/logo.png" alt="Logo">
-    <h1 class="title">X-Inventory</h1>
+    <NuxtLink to="/">
+      <img class="logo" src="/logo.png" alt="Logo">
+    </NuxtLink>    <h1 class="title">X-Inventory</h1>
     <div class="inventory-plan-wrapper" v-if="!isMobile">
       <div class="inventory-plan">
         <span>当前盘点计划</span>

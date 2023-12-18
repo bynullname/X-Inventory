@@ -41,6 +41,8 @@
   const inventoryState = useState('inventoryState',()=>false)
   const activeInventoryPlanId = useState('activeInventoryPlanId',()=>'')
   const totalInventoryCount = useState('totalInventoryCount',()=>0)
+  const isMute = useState('isMute',()=>true)
+
   let intervalId = null; // 用于存储定时器的引用
 
   // 当用户切换开关时调用
@@ -58,6 +60,7 @@
           message: inventoryState.value ? '盘点已开启' : '盘点已关闭',
           type: 'success',
         })
+        isMute.value = false
       }
     } catch (error) {
       ElMessage.error('设置库存盘点状态失败')

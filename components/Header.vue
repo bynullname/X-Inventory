@@ -2,7 +2,12 @@
   <header class="header">
     <NuxtLink to="/">
       <img class="logo" src="/logo.png" alt="Logo">
-    </NuxtLink>    <h1 class="title">X-Inventory</h1>
+    </NuxtLink>    
+    <h1 class="title">X-Inventory</h1>
+    
+    <el-button style="margin-left: 15px;" type="primary" :icon="!isMute ? Bell : MuteNotification " circle @click="isMute = !isMute" />
+
+  
     <div class="inventory-plan-wrapper" v-if="!isMobile">
       <div class="inventory-plan">
         <span>当前盘点计划</span>
@@ -15,9 +20,28 @@
 
 <script lang="ts" setup>
   import { useIsMobile } from '~/composables/useIsMobile';
+  import { Bell, MuteNotification} from '@element-plus/icons-vue'
+  import { tr } from 'element-plus/es/locale';
+  const isMute = useState('isMute',()=>true)
+
   const isMobile = useIsMobile();
   const activeInventoryPlanId = useState('activeInventoryPlanId',()=>'')
-</script>
+
+  // 监听 isMute.value 的变化
+  watch(() => isMute.value, (newValue) => {
+    if (newValue) {
+      ElMessage({
+        message: '关闭提示音',
+        type: 'info'
+      });
+    } else {
+      ElMessage({
+        message: '开启提示音',
+        type: 'info'
+      });
+    }
+  });
+  </script>
 
 <style scoped>
 .header {

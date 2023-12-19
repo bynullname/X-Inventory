@@ -26,6 +26,7 @@ import { deviceConfig } from '~/config/index';
 const lineWidth = ref(4); // 刻度线宽
 const cameraRoiBottom = ref(deviceConfig.camera_roi_bottom);
 const dashedLineTop = computed(() => `${cameraRoiBottom.value * 100}%`);
+const inventoryState = useState('inventoryState')
 
 
 const props = defineProps({
@@ -37,7 +38,7 @@ const props = defineProps({
   },
   updateInterval: {
     type: Number,
-    default: 200,
+    default: 100,
   },
 });
 
@@ -51,7 +52,7 @@ const setDefaultImage = (event) => {
 };
 
 const updateImage = () => {
-  imageUrl.value = `${deviceConfig.apiUrl}/api/image_${props.dir}?timestamp=${new Date().getTime()}`;
+  if(inventoryState.value) imageUrl.value = `${deviceConfig.apiUrl}/api/image_${props.dir}?timestamp=${new Date().getTime()}`;
 };
 
 // 垂直拖动相关的逻辑
@@ -107,25 +108,11 @@ const onDragHorizontal = (e) => {
 
   // 处理左侧拖动线
   if (draggableLineHorizontal.classList.contains('left-scale-line')) {
-    // if (newLeft < -halfLineWidth) {
-    //   draggableLineHorizontal.style.left = `-${halfLineWidth}px`;
-    // } else if (newLeft > containerWidth / 2 - halfLineWidth) {
-    //   draggableLineHorizontal.style.left = `${containerWidth / 2 - halfLineWidth}px`;
-    // } else {
-    //   draggableLineHorizontal.style.left = `${newLeft}px`;
-    // }
     leftScaleLinePercent.value = parseFloat(((newLeft + halfLineWidth) / containerWidth).toFixed(2));
   }
 
   // 处理右侧拖动线
   else if (draggableLineHorizontal.classList.contains('right-scale-line')) {
-    // if (newLeft < containerWidth / 2 - halfLineWidth) {
-    //   draggableLineHorizontal.style.left = `${containerWidth / 2 - halfLineWidth}px`;
-    // } else if (newLeft > containerWidth - halfLineWidth) {
-    //   draggableLineHorizontal.style.left = `${containerWidth - halfLineWidth}px`;
-    // } else {
-    //   draggableLineHorizontal.style.left = `${newLeft}px`;
-    // }
     rightScaleLinePercent.value = parseFloat(((newLeft + halfLineWidth) / containerWidth).toFixed(2));
   }
 };

@@ -15,7 +15,7 @@
               <el-input type="password" v-model="loginForm.password" class="login-input"></el-input>
             </el-form-item>
             <div class="button-container">
-              <el-button type="primary" @click="handleLogin">登录</el-button>
+              <el-button type="primary" @click="handleLogin(true)">登录</el-button>
             </div>
           </el-form>
         </div>
@@ -80,20 +80,21 @@ const inventoryPlanName = ref('');  // 盘点计划名称
 const selectedPlanId = ref(null);
 
 onMounted(async () => {
-  if (isMobile) {
-    navigateTo('/inventory');
-  }
+  // if (isMobile) {
+  //   navigateTo('/inventory');
+  // }
   const response = await fetchLatestInventoryPlans();
   if (!response.success) {
     ElMessage.error(response.message);
   }
+  handleLogin(false)
 });
 
 
 //登陆
-const handleLogin = async () => {
+const handleLogin = async (isShowMsg = false) => {
   try {
-    const response = await $fetch(deviceConfig.apiUrl+'/api/login', {
+    const response = await $fetch(deviceConfig.apiUrl + '/api/login', {
       method: 'POST',
       credentials: 'include',  // 重要：允许携带跨域 cookie
       body: loginForm
@@ -102,13 +103,32 @@ const handleLogin = async () => {
     if (response.success) {
       console.log('登录成功:', response.message);
       isLoggedIn.value = true; // 更新登录状态
+      ElMessage({
+        message: '登录成功',
+        type: 'success', // 显示成功消息
+        duration: 3000 // 消息显示时间，单位毫秒
+      });
     } else {
       console.log('登录失败:', response.message);
-      // 处理登录失败的情况
+      if(isShowMsg){
+          // 处理登录失败的情况
+          ElMessage({
+          message: '登录失败: ' + response.message,
+          type: 'error', // 显示错误消息
+          duration: 3000 // 消息显示时间，单位毫秒
+        });
+      }
     }
   } catch (error) {
     console.error('登录请求失败:', error);
-    // 处理请求错误
+    if(isShowMsg){
+      // 处理请求错误
+      ElMessage({
+        message: '登录请求失败: ' + error.message,
+        type: 'error', // 显示错误消息
+        duration: 3000 // 消息显示时间，单位毫秒
+      });
+    }
   }
 };
 

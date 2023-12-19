@@ -1,7 +1,7 @@
 <template>
   <div class="inventory-control">
       <el-switch
-          v-model="inventoryState"
+          v-model="localInventoryState"
           class="mb-2 switch-style"
           size="large"
           active-text="盘点"
@@ -38,7 +38,10 @@
   import { deviceConfig } from '~/config/index'; // 引入配置文件
   const { fetchActiveInventoryPlan, setInventorySwitchStatus, getInventorySwitchStatus,fetchTotalInventoryItemsCountByPlan } = useInventoryApi()
   const switchDialogVisible = ref(false)
+
+  const localInventoryState = ref(false) // 本地状态
   const inventoryState = useState('inventoryState',()=>false)
+
   const activeInventoryPlanId = useState('activeInventoryPlanId',()=>'')
   const totalInventoryCount = useState('totalInventoryCount',()=>0)
   const isMute = useState('isMute',()=>true)
@@ -54,34 +57,21 @@
   const confirmSwitchChange = async () => {
     switchDialogVisible.value = false
     try {
-      const response = await setInventorySwitchStatus(inventoryState.value)
+      const response = await setInventorySwitchStatus(localInventoryState.value)
       if (response.message === 'Inventory check status updated') {
         ElMessage({
-          message: inventoryState.value ? '盘点已开启' : '盘点已关闭',
+          message:localInventoryState.value ? '盘点已开启' : '盘点已关闭',
           type: 'success',
         })
+        inventoryState.value = localInventoryState.value; // 同步本地状态到全局状态
         isMute.value = false
       }
     } catch (error) {
       ElMessage.error('设置库存盘点状态失败')
-      inventoryState.value = !inventoryState.value // 重置状态
+      localInventoryState.value = !localInventoryState.value // 重置状态
     }
   }
 
-  // watch(inventoryState, async (newState) => {
-  //   try {
-  //     const response = await setInventorySwitchStatus(newState)
-  //     if (response.message === 'Inventory check status updated') {
-  //       ElMessage({
-  //         message: newState ? '盘点已开启' : '盘点已关闭',
-  //         type: 'success',
-  //       })
-  //     }
-  //   } catch (error) {
-  //     ElMessage.error('设置库存盘点状态失败')
-  //     inventoryState.value = !newState // 重置状态
-  //   }
-  // })
   // 用户取消盘点状态改变
   const cancelSwitchChange = () => {
     switchDialogVisible.value = false
@@ -117,7 +107,7 @@
     try {
       const response = await getInventorySwitchStatus()
       if (response.success) {
-        inventoryState.value = response.inventory_switch_status
+        localInventoryState.value =  inventoryState.value = response.inventory_switch_status
       } else {
         ElMessage.error(response.message);
       }

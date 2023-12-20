@@ -33,7 +33,6 @@
 
   function openBinsPage() {
     window.location.href = deviceConfig.binsUrl;
-    // alert(deviceConfig.binsUrl)
   }
 
   // 监听 isMute.value 的变化

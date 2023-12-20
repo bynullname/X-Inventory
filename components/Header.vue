@@ -6,6 +6,7 @@
     <h1 class="title">X-Inventory</h1>
     
     <el-button style="margin-left: 15px;" type="primary" :icon="!isMute ? Bell : MuteNotification " circle @click="isMute = !isMute" />
+    <el-button style="margin-left: 15px;" type="primary" :icon="Picture" circle @click="openBinsPage" />
 
   
     <div class="inventory-plan-wrapper" v-if="!isMobile">
@@ -20,12 +21,20 @@
 
 <script lang="ts" setup>
   import { useIsMobile } from '~/composables/useIsMobile';
-  import { Bell, MuteNotification} from '@element-plus/icons-vue'
+  import { Bell, MuteNotification, Picture} from '@element-plus/icons-vue'
   import { tr } from 'element-plus/es/locale';
+  import { deviceConfig } from '~/config/index';
+  const router = useRouter();
+
   const isMute = useState('isMute',()=>true)
 
   const isMobile = useIsMobile();
   const activeInventoryPlanId = useState('activeInventoryPlanId',()=>'')
+
+  function openBinsPage() {
+    window.location.href = deviceConfig.binsUrl;
+    // alert(deviceConfig.binsUrl)
+  }
 
   // 监听 isMute.value 的变化
   watch(() => isMute.value, (newValue) => {

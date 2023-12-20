@@ -16,7 +16,7 @@ export function useNotifyResult(data:any) {
 
         }
         else{
-          const beepSound = new Audio('/beep.wav');
+          const beepSound = new Audio('/beep_third_length.wav');
           beepSound.volume = 0.5; // 设置音量，1.0 是最大音量
           beepSound.play();
        }

@@ -7,6 +7,8 @@
         <!-- <InventoryData :activeInventoryPlanId="activeInventoryPlanId"/> -->
     </div>
   </div>
+  <LogoutButton />
+
 </template>
 
 <script setup>
@@ -27,10 +29,50 @@
   let socketTf, socketPointCloud;
   const wsData = ref([]);
   let reconnectInterval;
+  const loginForm = reactive({
+    username: '',
+    password: ''
+  });
 
+  //登陆
+  const handleLogin = async (isShowMsg = false) => {
+    try {
+      const response = await $fetch(deviceConfig.apiUrl + '/api/check_login_status', {
+        method: 'GET',
+        credentials: 'include',  // 重要：允许携带跨域 cookie
+      });
 
+      if (response.success) {
+        console.log('登录成功:', response.message);
+        ElMessage({
+          message: '登录成功',
+          type: 'success', // 显示成功消息
+          duration: 3000 // 消息显示时间，单位毫秒
+        });
+      } else {
+        if(isShowMsg){
+            ElMessage({
+            message: '请先登陆',
+            type: 'error', // 显示错误消息
+            duration: 3000 // 消息显示时间，单位毫秒
+          });
+        }
+        navigateTo('/');
+      }
+    } catch (error) {
+      if(isShowMsg){
+        ElMessage({
+          message: '请先登陆',
+          type: 'error', // 显示错误消息
+          duration: 3000 // 消息显示时间，单位毫秒
+        });
+      }
+      navigateTo('/');
+    }
+  };
 
   onMounted(async () => {
+    await handleLogin(true)
     connectWebSocket(socketTf, deviceConfig.wsUrl, wsData, reconnectInterval, data => {
       useNotifyResult(data)
     });
@@ -38,7 +80,7 @@
 
 </script>
 
-<style>
+<style scoped> 
 .container {
   display: flex;
   flex-direction: column;
@@ -61,6 +103,8 @@
   /* width: 100%; */
   height: 150px;
   min-height: 150px;
+  animation: slideDown 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+
 }
 
 .monitor{
@@ -68,6 +112,18 @@
   width: 100%;
   overflow-y: auto; /* 如果内容超出高度，允许滚动 */
 }
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 
 </style>
 

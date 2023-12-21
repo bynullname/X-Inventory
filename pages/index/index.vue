@@ -7,7 +7,7 @@
           <div class="logo">
             <img src="/logo.png" alt="Logo">
           </div>
-          <el-form>
+          <el-form @keyup.enter="handleLogin(true)">
             <el-form-item label="用&ensp;户&ensp;名">
               <el-input v-model="loginForm.username" class="login-input"></el-input>
             </el-form-item>
@@ -51,6 +51,7 @@
       </transition>
     </el-card>
   </div>
+  <LogoutButton />
 </template>
 
 <script setup>
@@ -59,6 +60,7 @@ import { deviceConfig } from '~/config/index';
 import { ElMessage } from 'element-plus'
 import { useIsMobile } from '~/composables/useIsMobile';
 import { useInventoryApi } from '~/composables/useInventoryApi';
+
 
 const 
 { 
@@ -70,7 +72,8 @@ const
 
 const isMobile = useIsMobile();
 
-const isLoggedIn = ref(false);
+const isLoggedIn = useState('isLoggedIn',()=>false)
+
 const loginForm = reactive({
   username: '',
   password: ''
@@ -154,6 +157,31 @@ const handleContinuePlan = async () => {
   }
 };
 
+// 登出 API URL
+const logoutApiUrl = deviceConfig.apiUrl + '/api/logout';
+
+// 处理登出逻辑
+const handleLogout = async () => {
+  try {
+    const response = await $fetch(logoutApiUrl, {
+      method: 'GET',
+      credentials: 'include',
+    });
+
+    if (response.success) {
+      console.log('登出成功:', response.message);
+    } else {
+      console.log('登出失败:', response.message);
+    }
+  } catch (error) {
+    console.error('登出请求失败:', error);
+  }
+};
+
+// 监听 beforeunload 事件
+window.addEventListener('beforeunload', (event) => {
+  handleLogout();
+});
 </script>
 
 <style scoped>
